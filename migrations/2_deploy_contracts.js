@@ -1,5 +1,5 @@
-var PeerPoint = artifacts.require("./PeerPoint.sol");
+var PeerPoint = artifacts.require('./PeerPoint.sol')
 
-module.exports = function(deployer) {
-  deployer.deploy(PeerPoint);
-};
+module.exports = function (deployer) {
+  deployer.deploy(PeerPoint)
+}
