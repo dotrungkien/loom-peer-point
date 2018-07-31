@@ -1,37 +1,5 @@
 <template>
   <v-app id="inspire">
-    <!-- <v-navigation-drawer
-      v-model="drawer"
-      fixed
-      app
-    >
-      <v-list>
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-icon>assessment</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>{{ network }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-icon>person_outline</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>{{ coinbase }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-icon>account_balance_wallet</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>{{ ethBalance }} ETH</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer> -->
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title>
@@ -62,29 +30,35 @@
 </template>
 
 <script>
-  // import {NETWORKS} from './util/constants/networks'
-  import {mapState} from 'vuex'
+import Contract from './util/contract'
+import pollAccount from './util/pollAccount'
+import { mapState } from 'vuex'
 
-  export default {
-    name: 'app',
-    data: () => ({
-    }),
-    methods: {
-      handleRedeem: function () {
-      }
-    },
-    computed: mapState({
-      // isInjected:state => state.web3.isInjected,
-      // network: state => NETWORKS[state.web3.networkId],
-      // coinbase: state => state.web3.coinbase,
-      // balance: state => state.web3.balance,
-      // ethBalance: state => {
-      //   if (state.web3.web3Instance !== null) return state.web3.web3Instance().fromWei(state.web3.balance, 'ether')
-      // }
-    }),
-    beforeCreate () {
-      // console.log('registerWeb3 Action dispatched Home.vue')
-      // this.$store.dispatch('registerWeb3')
+export default {
+  name: 'app',
+  data: () => ({
+  }),
+  computed: mapState([
+    'contract'
+  ]),
+  methods: {
+    handleRedeem: async function () {
+      let contract = this.contract()
+      await contract.redeem()
     }
+  },
+  created: async function () {
+    let contract = new Contract()
+    await contract.start()
+    await this.$store.dispatch('setContract', contract)
+    let user = contract.user
+    await this.$store.dispatch('setAccount', user)
+    let received = await contract.received()
+    await this.$store.dispatch('setReceived', received)
+    let available = await contract.available()
+    await this.$store.dispatch('setAvailable', available)
+    this.$store.dispatch('setContractLoaded', true)
+    pollAccount()
   }
+}
 </script>

@@ -1,6 +1,5 @@
 pragma solidity ^0.4.23;
 
-
 // ----------------------------------------------------------------------------
 // ERC Token Standard #20 Interface
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
@@ -46,21 +45,14 @@ library SafeMath {
 // ----------------------------------------------------------------------------
 contract PeerPoint is ERC20Interface {
     using SafeMath for uint256;
-
-    // Balances for each account
-    mapping(address => uint256) balances;
-
-    // Spendable points for each account
-    mapping(address => uint256) points;
-
-    // Next redeemable time for each account
-    mapping(address => uint256) nextRedeemableTimes;
-
-    // Amount of redeemable token each time
-    uint256 redeemableAmount;
+    mapping (address => uint256) public balances;
+    mapping (address => uint256) public points;
+    mapping (address => uint256) public sent;
+    mapping(address => uint256) public nextRedeemableTimes;
+    uint256 public redeemableAmount;
 
     // Contract owner
-    address owner;
+    address public owner;
 
     string public symbol;
     string public name;
@@ -68,8 +60,8 @@ contract PeerPoint is ERC20Interface {
     event SentPoint(address indexed _from, address indexed _to, uint256 _value, bytes32 _message);
 
     constructor () public {
-        symbol = "PBP";
-        name = "Peer Bonus Point";
+        symbol = "LPBP";
+        name = "Loom Peer Bonus Point";
         redeemableAmount = 400;
         owner = msg.sender;
     }
@@ -78,6 +70,10 @@ contract PeerPoint is ERC20Interface {
     // Total supply - just to fulfill erc20 interface
     // ------------------------------------------------------------------------
     function totalSupply() public view returns (uint256) {}
+
+    function sentPoints(address _owner) public view returns (uint256) {
+        return sent[_owner];
+    }
 
     // Get the token balance for account `_owner`
     function balanceOf(address _owner) public view returns (uint256) {
@@ -109,6 +105,7 @@ contract PeerPoint is ERC20Interface {
         require(_to != msg.sender);
         require(_value <= points[msg.sender]);
         points[msg.sender] = points[msg.sender].sub(_value);
+        sent[msg.sender] = sent[msg.sender].add(_value);
         balances[_to] = balances[_to].add(_value);
         emit SentPoint(msg.sender, _to, _value, _message);
         return true;

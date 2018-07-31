@@ -25,6 +25,7 @@ export default class Contract {
 
     const from = LocalAddress.fromPublicKey(publicKey).toString()
     const web3 = new Web3(new LoomProvider(client, privateKey))
+    this.web3 = () => web3
     this.user = from
 
     const abi = PeerPoint.abi
@@ -38,7 +39,18 @@ export default class Contract {
   getUser () {
     return this.user
   }
-  async balance () {
+
+  async sent () {
+    let point = await this.contract.methods.sentPoints(this.user).call()
+    return point
+  }
+
+  async received () {
+    let point = await this.contract.methods.balanceOf(this.user).call()
+    return point
+  }
+
+  async available () {
     let point = await this.contract.methods.pointOf(this.user).call()
     return point
   }
@@ -48,6 +60,6 @@ export default class Contract {
   }
 
   async sendPoint (to, value, message) {
-    await this.contract.methods.SendPoint(to, value, message).send()
+    await this.contract.methods.sendPoint(to, value, message).send()
   }
 }

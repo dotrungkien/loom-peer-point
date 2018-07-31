@@ -1,25 +1,42 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import state from './state'
+
+const mutateKey = key => (state, val) => {
+  state[key] = val
+}
+
+const commitChange = change => ({ commit }, payload) => {
+  commit(change, payload)
+}
 
 Vue.use(Vuex)
 export const store = new Vuex.Store({
   strict: true,
-  state,
+  state: {
+    contractLoaded: false,
+    account: null,
+    contract: null,
+    sent: null,
+    received: null,
+    available: null
+  },
   mutations: {
-    setAccount (state, payload) {
-      state.account = payload
+    setContract: (state, val) => {
+      state.contract = () => val
+      console.log('register contract completed!', val)
     },
-    setContract (state, payload) {
-      state.contract = () => payload
-    }
+    setAccount: mutateKey('account'),
+    setSent: mutateKey('sent'),
+    setReceived: mutateKey('received'),
+    setAvailable: mutateKey('available'),
+    setContractLoaded: mutateKey('contractLoaded')
   },
   actions: {
-    setAccount ({ commit }, payload) {
-      commit('setAccount', payload)
-    },
-    setContract ({ commit }, payload) {
-      commit('setContract', payload)
-    }
+    setContract: commitChange('setContract'),
+    setAccount: commitChange('setAccount'),
+    setSent: commitChange('setSent'),
+    setReceived: commitChange('setReceived'),
+    setAvailable: commitChange('setAvailable'),
+    setContractLoaded: commitChange('setContractLoaded')
   }
 })
