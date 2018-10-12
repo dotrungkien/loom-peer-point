@@ -32,7 +32,7 @@
 <script>
 import Contract from './util/contract'
 import pollAccount from './util/pollAccount'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'app',
@@ -45,19 +45,26 @@ export default {
     handleRedeem: async function () {
       let contract = this.contract()
       await contract.redeem()
-    }
+    },
+    ...mapActions([
+      'setContract',
+      'setAccount',
+      'setReceived',
+      'setAvailable',
+      'setContractLoaded'
+    ])
   },
   created: async function () {
     let contract = new Contract()
     await contract.start()
-    await this.$store.dispatch('setContract', contract)
+    await this.setContract(contract)
     let user = contract.user
-    await this.$store.dispatch('setAccount', user)
+    await this.setAccount(user)
     let received = await contract.received()
-    await this.$store.dispatch('setReceived', received)
+    await this.setReceived(received)
     let available = await contract.available()
-    await this.$store.dispatch('setAvailable', available)
-    this.$store.dispatch('setContractLoaded', true)
+    await this.setAvailable(available)
+    this.setContractLoaded(true)
     pollAccount()
   }
 }

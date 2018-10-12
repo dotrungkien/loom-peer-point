@@ -13,6 +13,16 @@ function getClient (privateKey, publicKey) {
 
 export default class Contract {
   async start () {
+    await this.registerWeb3()
+    await this.instantiateContract()
+    let etherWeb3 = window.web3
+    etherWeb3 = new Web3(etherWeb3.currentProvider)
+    await etherWeb3.eth.getCoinbase().then(result => {
+      this.etherAddress = result
+    })
+  }
+
+  registerWeb3 () {
     const privateKey = CryptoUtils.generatePrivateKey()
     const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
     const client = getClient(privateKey, publicKey)
@@ -23,18 +33,23 @@ export default class Contract {
 
     const from = LocalAddress.fromPublicKey(publicKey).toString()
     const web3 = new Web3(new LoomProvider(client, privateKey))
-    this.web3 = () => web3
+    this.web3 = web3
     this.user = from
+  }
 
+  instantiateContract () {
     const abi = PeerPoint.abi
-
     const networkId = 'default'
     const currentNetwork = PeerPoint.networks[networkId]
     const contractAddress = currentNetwork.address
 
-    this.contract = new web3.eth.Contract(abi, contractAddress, {
+    this.contract = new this.web3.eth.Contract(abi, contractAddress, {
       from: this.user
     })
+  }
+
+  async login () {
+    await this.contract.methods.etherToLoomAddress(this.etherAddress).call()
   }
 
   getUser () {

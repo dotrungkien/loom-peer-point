@@ -49,6 +49,7 @@ contract PeerPoint is ERC20Interface {
     mapping (address => uint256) public points;
     mapping (address => uint256) public sent;
     mapping(address => uint256) public nextRedeemableTimes;
+    mapping (address => address) public etherToLoomAddress;
     uint256 public redeemableAmount;
 
     // Contract owner
@@ -64,6 +65,11 @@ contract PeerPoint is ERC20Interface {
         name = "Loom Peer Bonus Point";
         redeemableAmount = 400;
         owner = msg.sender;
+    }
+
+    function connectToLoom(address loomAddress) public {
+        require(etherToLoomAddress[msg.sender] == address(0));
+        etherToLoomAddress[msg.sender] = loomAddress;
     }
 
     // ------------------------------------------------------------------------
