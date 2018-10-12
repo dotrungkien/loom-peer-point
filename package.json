@@ -1,8 +1,8 @@
 {
-  "name": "peer_point",
+  "name": "peer-point",
   "version": "1.0.0",
-  "description": "vuetify + truffle",
-  "author": "Nguyen Anh Tien <nguyen.anh.tien@framgia.com>",
+  "description": "truffle + web3js + loom dappchain",
+  "author": "Do Trung Kien <trungkien.keio@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
