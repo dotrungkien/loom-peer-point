@@ -1,6 +1,4 @@
-import {
-  Client, LocalAddress, CryptoUtils, LoomProvider
-} from 'loom-js/dist'
+import { Client, LocalAddress, CryptoUtils, LoomProvider } from 'loom-js/dist'
 
 import Web3 from 'web3'
 import PeerPoint from '../contracts/PeerPoint.json'
@@ -29,11 +27,14 @@ export default class Contract {
     this.user = from
 
     const abi = PeerPoint.abi
-    const networkId = await web3.eth.net.getId()
+
+    const networkId = 'default'
     const currentNetwork = PeerPoint.networks[networkId]
     const contractAddress = currentNetwork.address
 
-    this.contract = new web3.eth.Contract(abi, contractAddress, {from: this.user})
+    this.contract = new web3.eth.Contract(abi, contractAddress, {
+      from: this.user
+    })
   }
 
   getUser () {
