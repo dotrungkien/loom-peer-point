@@ -11,8 +11,9 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "loom-js": "^1.14.0",
-    "loom-truffle-provider": "^0.4.0",
+    "loom-js": "^1.26.0",
+    "loom-truffle-provider": "^0.7.0",
+    "truffle": "^4.1.14",
     "truffle-contract": "^3.0.5",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
