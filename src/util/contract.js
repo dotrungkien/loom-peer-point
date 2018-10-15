@@ -3,38 +3,48 @@ import { Client, LocalAddress, CryptoUtils, LoomProvider } from 'loom-js/dist'
 import Web3 from 'web3'
 import PeerPoint from '../contracts/PeerPoint.json'
 
-function getClient (privateKey, publicKey) {
-  return new Client(
-    'default',
-    'ws://127.0.0.1:46657/websocket',
-    'ws://127.0.0.1:9999/queryws'
-  )
-}
-
 export default class Contract {
   async start () {
-    await this.registerWeb3()
+    await this.getLoomAccount()
     await this.instantiateContract()
+  }
+
+  async getLoomAccount () {
     let etherWeb3 = window.web3
     etherWeb3 = new Web3(etherWeb3.currentProvider)
-    await etherWeb3.eth.getCoinbase().then(result => {
-      this.etherAddress = result
+    await etherWeb3.eth.getCoinbase().then(address => {
+      let b64PrivateKey = localStorage.getItem(address)
+      if (!b64PrivateKey) {
+        b64PrivateKey = this.registerNewKey(address)
+      }
+      this.registerWeb3(b64PrivateKey)
     })
   }
 
-  registerWeb3 () {
-    const privateKey = CryptoUtils.generatePrivateKey()
+  registerNewKey (address) {
+    let privateKey = CryptoUtils.generatePrivateKey()
+    let b64PrivateKey = CryptoUtils.Uint8ArrayToB64(privateKey)
+    localStorage.setItem(address, b64PrivateKey)
+    return b64PrivateKey
+  }
+
+  registerWeb3 (b64PrivateKey) {
+    const privateKey = CryptoUtils.B64ToUint8Array(b64PrivateKey)
     const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
-    const client = getClient(privateKey, publicKey)
+    const from = LocalAddress.fromPublicKey(publicKey).toString()
+    this.user = from
+    const client = new Client(
+      'default',
+      'ws://127.0.0.1:46657/websocket',
+      'ws://127.0.0.1:9999/queryws'
+    )
     client.on('error', msg => {
       console.error('Error on connect to client', msg)
       console.warn('Please verify if loom command is running')
     })
 
-    const from = LocalAddress.fromPublicKey(publicKey).toString()
     const web3 = new Web3(new LoomProvider(client, privateKey))
     this.web3 = web3
-    this.user = from
   }
 
   instantiateContract () {
@@ -49,7 +59,7 @@ export default class Contract {
   }
 
   async login () {
-    await this.contract.methods.etherToLoomAddress(this.etherAddress).call()
+    await this.contract.methods.connectToLoom(this.from).call()
   }
 
   getUser () {
