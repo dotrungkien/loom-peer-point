@@ -14,7 +14,8 @@ export const store = new Vuex.Store({
   strict: true,
   state: {
     contractLoaded: false,
-    account: null,
+    loomAccount: null,
+    ethAccount: null,
     contract: null,
     sent: null,
     received: null,
@@ -25,7 +26,8 @@ export const store = new Vuex.Store({
       state.contract = () => val
       console.log('register contract completed!', val)
     },
-    setAccount: mutateKey('account'),
+    setLoomAccount: mutateKey('loomAccount'),
+    setEthAccount: mutateKey('ethAccount'),
     setSent: mutateKey('sent'),
     setReceived: mutateKey('received'),
     setAvailable: mutateKey('available'),
@@ -33,7 +35,8 @@ export const store = new Vuex.Store({
   },
   actions: {
     setContract: commitChange('setContract'),
-    setAccount: commitChange('setAccount'),
+    setLoomAccount: commitChange('setLoomAccount'),
+    setEthAccount: commitChange('setEthAccount'),
     setSent: commitChange('setSent'),
     setReceived: commitChange('setReceived'),
     setAvailable: commitChange('setAvailable'),

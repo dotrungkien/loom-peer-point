@@ -1,14 +1,12 @@
-import Web3 from 'web3'
 import { store } from '../store'
 
-let pollAccount = function () {
-  let web3 = window.web3
-  web3 = new Web3(web3.currentProvider)
+let pollAccount = () => {
   setInterval(async () => {
-    if (!web3) return
     let contract = store.state.contract()
-    let user = contract.user
-    await store.dispatch('setAccount', user)
+    let loomAccount = contract.loomAccount
+    await store.dispatch('setLoomAccount', loomAccount)
+    let ethAccount = contract.ethAccount
+    await store.dispatch('setEthAccount', ethAccount)
     let sent = await contract.sent()
     await store.dispatch('setSent', sent)
     let received = await contract.received()

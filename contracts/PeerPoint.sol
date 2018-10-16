@@ -1,9 +1,5 @@
 pragma solidity ^0.4.23;
 
-// ----------------------------------------------------------------------------
-// ERC Token Standard #20 Interface
-// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
-// ----------------------------------------------------------------------------
 contract ERC20Interface {
     function totalSupply() public view returns (uint256 totalSupply_);
     function balanceOf(address _owner) public view returns (uint256 balance);
@@ -16,10 +12,6 @@ contract ERC20Interface {
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 }
 
-
-// ----------------------------------------------------------------------------
-// Safe maths
-// ----------------------------------------------------------------------------
 library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256 c) {
         c = a + b;
@@ -40,20 +32,14 @@ library SafeMath {
 }
 
 
-// ----------------------------------------------------------------------------
-// Unipos
-// ----------------------------------------------------------------------------
 contract PeerPoint is ERC20Interface {
     using SafeMath for uint256;
     mapping (address => uint256) public balances;
     mapping (address => uint256) public points;
     mapping (address => uint256) public sent;
-    mapping(address => uint256) public nextRedeemableTimes;
     uint256 public redeemableAmount;
 
-    // Contract owner
     address public owner;
-
     string public symbol;
     string public name;
 
@@ -66,39 +52,22 @@ contract PeerPoint is ERC20Interface {
         owner = msg.sender;
     }
 
-    // ------------------------------------------------------------------------
-    // Total supply - just to fulfill erc20 interface
-    // ------------------------------------------------------------------------
     function totalSupply() public view returns (uint256) {}
 
     function sentPoints(address _owner) public view returns (uint256) {
         return sent[_owner];
     }
 
-    // Get the token balance for account `_owner`
     function balanceOf(address _owner) public view returns (uint256) {
         return balances[_owner];
     }
 
-    modifier updatePoints {
-        // have not been updated recently
-        if (now >= nextRedeemableTimes[msg.sender]) {
-            redeem();
-        }
-        _;
-    }
-
-    // Get the spendable point for account `_owner`
     function pointOf(address _owner) public view returns (uint256) {
-        if (now > nextRedeemableTimes[msg.sender]) {
-            return redeemableAmount;
-        }
         return points[_owner];
     }
 
     function sendPoint(address _to, uint256 _value, bytes32 _message)
         public
-        updatePoints
         returns (bool success)
     {
         require(_to != address(0));
@@ -111,7 +80,6 @@ contract PeerPoint is ERC20Interface {
         return true;
     }
 
-    // Transfer the balance from owner's account to another account
     function transfer(address _to, uint256 _value) public returns (bool success) {
         _to;
         _value;
@@ -136,23 +104,7 @@ contract PeerPoint is ERC20Interface {
         return 0;
     }
 
-
-    // Allow an address to redeem token if
-    function redeem() public returns (uint256 point, uint256 nextRedeemableTime) {
-        address _owner = msg.sender;
-        // If block timestamp is larger than next redeemable time
-        if (now >= nextRedeemableTimes[_owner] ) {
-            points[_owner] = redeemableAmount;
-
-            nextRedeemableTimes[_owner] = now.sub(now % (1 days)).add(1 days);
-        }
-
-        return (points[_owner], nextRedeemableTimes[_owner]);
-    }
-
-    // Reset next redeemable time of an address, only callable by contract's owner
-    function resetTime(address _owner) public {
-        require(msg.sender == owner);
-        nextRedeemableTimes[_owner] = 0;
+    function redeem() public {
+        points[msg.sender] = redeemableAmount;
     }
 }

@@ -13,6 +13,7 @@ export default class Contract {
     let etherWeb3 = window.web3
     etherWeb3 = new Web3(etherWeb3.currentProvider)
     await etherWeb3.eth.getCoinbase().then(address => {
+      this.ethAccount = address
       let b64PrivateKey = localStorage.getItem(address)
       if (!b64PrivateKey) {
         b64PrivateKey = this.registerNewKey(address)
@@ -31,8 +32,8 @@ export default class Contract {
   registerWeb3 (b64PrivateKey) {
     const privateKey = CryptoUtils.B64ToUint8Array(b64PrivateKey)
     const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
-    const from = LocalAddress.fromPublicKey(publicKey).toString()
-    this.user = from
+    const loomAccount = LocalAddress.fromPublicKey(publicKey).toString()
+    this.loomAccount = loomAccount
     const client = new Client(
       'default',
       'ws://127.0.0.1:46657/websocket',
@@ -54,7 +55,7 @@ export default class Contract {
     const contractAddress = currentNetwork.address
 
     this.contract = new this.web3.eth.Contract(abi, contractAddress, {
-      from: this.user
+      from: this.loomAccount
     })
   }
 
@@ -63,21 +64,21 @@ export default class Contract {
   }
 
   getUser () {
-    return this.user
+    return this.loomAccount
   }
 
   async sent () {
-    let point = await this.contract.methods.sentPoints(this.user).call()
+    let point = await this.contract.methods.sentPoints(this.loomAccount).call()
     return point
   }
 
   async received () {
-    let point = await this.contract.methods.balanceOf(this.user).call()
+    let point = await this.contract.methods.balanceOf(this.loomAccount).call()
     return point
   }
 
   async available () {
-    let point = await this.contract.methods.pointOf(this.user).call()
+    let point = await this.contract.methods.pointOf(this.loomAccount).call()
     return point
   }
 

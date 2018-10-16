@@ -1,6 +1,7 @@
 <template>
   <v-flex text-xs-center>
-    <h1>Loom Account Address: {{ account }}</h1>
+    <h1>Eth Account Address: {{ ethAccount }}</h1>
+    <h1>Loom Account Address: {{ loomAccount }}</h1>
     <h1>Sent: {{ sent }}</h1>
     <h1>Received: {{ received }}</h1>
     <h1>Available: {{ available }}</h1>
@@ -56,9 +57,8 @@ export default {
   }),
   methods: {
     submit: function () {
-      let contract = this.$store.state.contract()
-      let web3 = contract.web3()
-      console.log(web3)
+      let contract = this.contract()
+      let web3 = contract.web3
       contract.sendPoint(
         this.toAddress,
         this.amount,
@@ -72,7 +72,8 @@ export default {
   computed: {
     ...mapState([
       'contract',
-      'account',
+      'ethAccount',
+      'loomAccount',
       'sent',
       'received',
       'available'
@@ -85,9 +86,10 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-weight: normal;
 }
 ul {

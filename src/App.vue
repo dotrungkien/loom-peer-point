@@ -1,16 +1,9 @@
 <template>
   <v-app id="inspire">
     <v-toolbar color="indigo" dark fixed app>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <v-toolbar-title>
-          <router-link
-            to="/"
-            tag="span"
-            style="cursor: pointer"
-            >
-            Peer Point
-          </router-link>
-        </v-toolbar-title>
+      <v-toolbar-title>
+        Peer Point on Loom Dappchain
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn flat @click="handleRedeem"><v-icon left>add_circle_outline</v-icon>Redeem</v-btn>
@@ -42,13 +35,14 @@ export default {
     'contract'
   ]),
   methods: {
-    handleRedeem: async function () {
+    handleRedeem: function () {
       let contract = this.contract()
-      await contract.redeem()
+      contract.redeem()
     },
     ...mapActions([
       'setContract',
-      'setAccount',
+      'setLoomAccount',
+      'setEthAccount',
       'setReceived',
       'setAvailable',
       'setContractLoaded'
@@ -56,16 +50,19 @@ export default {
   },
   created: async function () {
     let contract = new Contract()
-    await contract.start()
-    await this.setContract(contract)
-    let user = contract.user
-    await this.setAccount(user)
-    let received = await contract.received()
-    await this.setReceived(received)
-    let available = await contract.available()
-    await this.setAvailable(available)
-    this.setContractLoaded(true)
-    pollAccount()
+    await contract.start().then(() => {
+      this.setContract(contract)
+      this.setEthAccount(contract.ethAccount)
+      this.setLoomAccount(contract.loomAccount)
+      contract.received().then(received => {
+        this.setReceived(received)
+      })
+      contract.available().then(available => {
+        this.setAvailable(available)
+      })
+      this.setContractLoaded(true)
+      pollAccount()
+    })
   }
 }
 </script>
