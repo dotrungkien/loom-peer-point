@@ -1,29 +1,18 @@
-# peer_point
+# Peer Point on Loom Dappchain
 
-> vuetify + truffle
+## How to run
 
-> Demo: https://peerpoint.surge.sh/#/
+1. Run your dappchain
 
-## Build Setup
+make sure you have loom installed. See more [https://loomx.io](https://loomx.io)
 
-``` bash
-# compile contracts
-truffle compile
-
-# migrate compiled contracts to a network
-truffle migrate --network your_net_work_here
-
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
+```sh
+cd dapp-chain/
+loom run
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+2. Run your application
+
+```sh
+yarn start
+```
