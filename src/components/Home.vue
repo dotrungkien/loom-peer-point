@@ -8,30 +8,10 @@
     <v-layout justify-center>
       <v-flex xs12 sm10 md8>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field
-            v-model="toAddress"
-            :rules="toAddressRules"
-            label="To"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="amount"
-            :rules="amountRules"
-            label="Amount"
-            required
-          ></v-text-field>
-
-          <v-text-field
-            v-model="message"
-            label="Message"
-          ></v-text-field>
-
-          <v-btn
-            :disabled="!valid"
-            @click="submit"
-          >
-            submit
-          </v-btn>
+          <v-text-field v-model="toAddress" :rules="toAddressRules" label="To" required></v-text-field>
+          <v-text-field v-model="amount" :rules="amountRules" label="Amount" required></v-text-field>
+          <v-text-field v-model="message" label="Message"></v-text-field>
+          <v-btn :disabled="!valid" @click="submit">submit</v-btn>
           <v-btn @click="clear">clear</v-btn>
         </v-form>
       </v-flex>

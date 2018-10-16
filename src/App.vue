@@ -1,20 +1,18 @@
 <template>
   <v-app id="inspire">
     <v-toolbar color="indigo" dark fixed app>
-      <v-toolbar-title>
-        Peer Point on Loom Dappchain
-      </v-toolbar-title>
+      <v-toolbar-title>Peer Point on Loom Dappchain</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn flat @click="handleRedeem"><v-icon left>add_circle_outline</v-icon>Redeem</v-btn>
+        <v-btn flat @click="handleRedeem">
+          <v-icon left>add_circle_outline</v-icon>Redeem
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
       <v-container fluid fill-height>
-        <v-layout
-          justify-center
-        >
-          <router-view ></router-view>
+        <v-layout justify-center>
+          <router-view></router-view>
         </v-layout>
       </v-container>
     </v-content>
