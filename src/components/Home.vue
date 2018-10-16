@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   data: () => ({
@@ -59,7 +59,8 @@ export default {
     submit: function () {
       let contract = this.contract()
       let web3 = contract.web3
-      contract.sendPoint(
+      contract.send(
+        'sendPoint',
         this.toAddress,
         this.amount,
         web3.utils.sha3(this.message)
@@ -77,11 +78,7 @@ export default {
       'sent',
       'received',
       'available'
-    ]),
-    balance: async function () {
-      let balance = await this.contract().pointOf(this.account)
-      return balance
-    }
+    ])
   }
 }
 </script>

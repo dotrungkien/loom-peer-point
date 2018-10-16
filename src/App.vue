@@ -7,7 +7,6 @@
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn flat @click="handleRedeem"><v-icon left>add_circle_outline</v-icon>Redeem</v-btn>
-        <v-btn flat to="/transactions"><v-icon left>list</v-icon>Transactions</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
@@ -37,7 +36,7 @@ export default {
   methods: {
     handleRedeem: function () {
       let contract = this.contract()
-      contract.redeem()
+      contract.send('redeem')
     },
     ...mapActions([
       'setContract',
@@ -54,12 +53,6 @@ export default {
       this.setContract(contract)
       this.setEthAccount(contract.ethAccount)
       this.setLoomAccount(contract.loomAccount)
-      contract.received().then(received => {
-        this.setReceived(received)
-      })
-      contract.available().then(available => {
-        this.setAvailable(available)
-      })
       this.setContractLoaded(true)
       pollAccount()
     })

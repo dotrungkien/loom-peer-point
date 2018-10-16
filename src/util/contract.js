@@ -59,34 +59,12 @@ export default class Contract {
     })
   }
 
-  async login () {
-    await this.contract.methods.connectToLoom(this.from).call()
+  async call (methodName, ...args) {
+    let result = await this.contract.methods[methodName](...args).call()
+    return result
   }
 
-  getUser () {
-    return this.loomAccount
-  }
-
-  async sent () {
-    let point = await this.contract.methods.sentPoints(this.loomAccount).call()
-    return point
-  }
-
-  async received () {
-    let point = await this.contract.methods.balanceOf(this.loomAccount).call()
-    return point
-  }
-
-  async available () {
-    let point = await this.contract.methods.pointOf(this.loomAccount).call()
-    return point
-  }
-
-  async redeem () {
-    await this.contract.methods.redeem().send()
-  }
-
-  async sendPoint (to, value, message) {
-    await this.contract.methods.sendPoint(to, value, message).send()
+  async send (methodName, ...args) {
+    await this.contract.methods[methodName](...args).send()
   }
 }
